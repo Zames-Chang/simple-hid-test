@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="all">
+        <button @click="hidRequest">request</button>
+    </div>
+    <script>
+        window.onload = function() {
+            var vm = new Vue({
+                el: '#all',
+                data() {
+                return {
+                    dut_ip: '',
+                }
+                },
+                methods: {
+                    hidRequest: async function() {
+                        const hid = window.navigator.hid;
+                        const hidDevices = await hid.requestDevice({
+                            filters: [{
+                                usagePage: 0x01,
+                            }],
+                        });
+                        addEventListener('inputreport', (e) =>
+                            console.log(e) 
+                        );
+                    }
+                }
+            });
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+  </body>
+</html>
