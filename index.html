@@ -2,28 +2,47 @@
 <html>
   <body>
     <div id="all">
-        <button @click="hidRequest">request</button>
+        <button @click="keboard">keboard</button>
+        <button @click="telephony">telephony</button>
     </div>
     <script>
         window.onload = function() {
             var vm = new Vue({
                 el: '#all',
                 data() {
-                return {
-                    dut_ip: '',
-                }
+                    return {
+                        hidDevice: ""
+                    }
                 },
                 methods: {
-                    hidRequest: async function() {
+                    keboard: async function() {
                         const hid = window.navigator.hid;
+                        let kidboard = 0x01
                         const hidDevices = await hid.requestDevice({
                             filters: [{
-                                usagePage: 0x01,
+                                usagePage: kidboard,
                             }],
                         });
-                        addEventListener('inputreport', (e) =>
-                            console.log(e) 
-                        );
+                        this.hidDevice = hidDevices[0]
+                        await this.hidDevice.open();
+                        this.hidDevice.addEventListener('inputreport', (e) => this.onInputReport(e));
+                    },
+                    telephony: async function() {
+                        const hid = window.navigator.hid;
+                        let telephony = 0x0b
+                        const hidDevices = await hid.requestDevice({
+                            filters: [{
+                                usagePage: telephony,
+                            }],
+                        });
+                        console.log(hidDevices);
+                        this.hidDevice = hidDevices[0]
+                        await this.hidDevice.open();
+                        this.hidDevice.addEventListener('inputreport', (e) => this.onInputReport(e));
+                        console.log(this.hidDevice);
+                    },
+                    onInputReport: function(e) {
+                        console.log(e);
                     }
                 }
             });
